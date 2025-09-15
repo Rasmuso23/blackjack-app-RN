@@ -1,10 +1,13 @@
+import { useRouter } from "expo-router";
 import { View, Text, Button, StyleSheet } from "react-native";
 
-export default function HomeScreen() {
+export default function Index() {
+    const router = useRouter();
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>♠️Blackjack♠️</Text>
-            <Button title="Starta spelet" />
+            <Button title="Starta spelet" onPress={() => router.push("/game")} />
         </View> 
     );
 }
