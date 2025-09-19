@@ -2,28 +2,30 @@ import { View, Text, StyleSheet,Pressable, Button } from "react-native";
 import { useState } from "react";
 import { Card, createDeck, getHandValue } from "../src/components/deck";
 import { useRouter } from "expo-router";
+import { Winner } from "../src/rules";
+import { useGame } from "../src/context/GameContext";
 
 export default function Game() {
     const router = useRouter();
 
     const [deck, setDeck] = useState<Card[]>([]);
-    const [player, setPlayer] = useState<Card[]>([]);
-    const [dealer, setDealer] = useState<Card[]>([]);
+    const { playerHand, dealerHand, setPlayerHand, setDealerHand } = useGame();
 
     const deal = () => {
         const d = createDeck();
         setDeck(d);
-        setPlayer([d[0], d[2]]);
-        setDealer([d[1], d[3]]);
+        setPlayerHand([d[0], d[2]]);
+        setDealerHand([d[1], d[3]]);
     }
 
     const displayHand = (hand: Card[]) => hand.map(c => `${c.suit}${c.value}`).join(" ");
 
     return (
         <View style={styles.container}>
-            <Text style={styles.dealer}>Dealer: {displayHand(dealer)}({getHandValue(dealer)})</Text>
+            <Text style={styles.dealer}>Dealer: {displayHand(dealerHand)}({getHandValue(dealerHand)})</Text>
                 <Button title="Deal" onPress={deal} />
-                    <Text style={styles.player}>Player: {displayHand(player)}({getHandValue(player)})</Text>
+                <Winner />
+                    <Text style={styles.player}>Player: {displayHand(playerHand)}({getHandValue(playerHand)})</Text>
                 <Pressable style={styles.homeButton} onPress={() => router.push("/")}>
                     <Text style={styles.buttonText}>Home</Text>
                 </Pressable>
