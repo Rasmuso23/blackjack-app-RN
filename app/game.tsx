@@ -26,7 +26,7 @@ export default function Game() {
                 <Button title="Deal" onPress={deal} />
                 <Winner />
                     <Text style={styles.player}>Player: {displayHand(playerHand)}({getHandValue(playerHand)})</Text>
-                <Pressable style={styles.homeButton} onPress={() => router.push("/")}>
+                <Pressable style={styles.homeButton} onPress={() => { setPlayerHand([]); setDealerHand([]);router.push("/")}}>
                     <Text style={styles.buttonText}>Home</Text>
                 </Pressable>
         </View>
