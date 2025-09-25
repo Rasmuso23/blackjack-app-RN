@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
-import { Card } from '../components/deck';
+import { Card } from '../components/Deck';
 
 type GameContextType = {
   playerHand: Card[];

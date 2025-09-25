@@ -1,5 +1,5 @@
 import { View, StyleSheet, Text } from 'react-native';
-import { Card } from './deck';
+import { Card } from './Deck';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface CardProps {
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
   value: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: '700',
     marginBottom: 4,
   },
