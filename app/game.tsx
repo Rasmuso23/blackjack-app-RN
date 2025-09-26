@@ -1,53 +1,19 @@
-import { View, Text, StyleSheet, Pressable, Button } from 'react-native';
-import { useState } from 'react';
-import { Card, createDeck, getHandValue } from '../src/components/deck';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { getHandValue } from '../src/components/Deck';
 import { useRouter } from 'expo-router';
-import { Winner } from '../src/rules';
+import { useBlackjack } from '../src/hooks/useBlackjack';
 import { useGame } from '../src/context/GameContext';
 import { LinearGradient } from 'expo-linear-gradient';
-import PlayingCard from '../src/components/card';
+import PlayingCard from '../src/components/Card';
+import ActionButton from '../src/components/ActionButton';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function Game() {
   const router = useRouter();
 
-  const [deck, setDeck] = useState<Card[]>([]);
   const { playerHand, dealerHand, setPlayerHand, setDealerHand } = useGame();
-  const [hiddenCard, setHiddenCard] = useState<Card | null>(null);
-
-  const deal = () => {
-    setPlayerHand([]);
-    setDealerHand([]);
-    setHiddenCard(null);
-
-    setTimeout(() => {
-      const d = createDeck();
-      setDeck(d);
-
-      setTimeout(() => {
-        setPlayerHand([d[0]]);
-      }, 500);
-
-      setTimeout(() => {
-        setDealerHand([d[1]]);
-      }, 1000);
-
-      setTimeout(() => {
-        setPlayerHand([d[0], d[2]]);
-      }, 1500);
-
-      setTimeout(() => {
-        setHiddenCard(d[3]);
-      }, 2000);
-    }, 1000);
-  };
-
-  const displayHand = (hand: Card[]) => hand.map((c) => `${c.suit}${c.value}`).join(' ');
-
-  const reveal = () => {
-    if (!hiddenCard) return;
-    setDealerHand([dealerHand[0], hiddenCard]);
-    setHiddenCard(null);
-  };
+  const { hiddenCard, message, roundOver, isDealing, deal, onHit, onStand, setHiddenCard } =
+    useBlackjack(setPlayerHand, setDealerHand);
 
   return (
     <LinearGradient
@@ -56,27 +22,34 @@ export default function Game() {
       end={{ x: 0.8, y: 1 }}
       style={styles.container}
     >
-      <View style={styles.dealer}>
-        <Text>Dealer ({hiddenCard ? '?' : getHandValue(dealerHand)})</Text>
-        <View style={{ flexDirection: 'row' }}>
-          {dealerHand.map((c, i) => (
-            <PlayingCard key={i} card={c} />
-          ))}
-          {hiddenCard && <PlayingCard card={hiddenCard} faceDown />}
+      <View style={styles.topSection}>
+        <View>
+          <Text>Dealer ({hiddenCard ? '?' : getHandValue(dealerHand)})</Text>
+          <View style={{ flexDirection: 'row' }}>
+            {dealerHand.map((c, i) => (
+              <PlayingCard key={i} card={c} />
+            ))}
+            {hiddenCard && <PlayingCard card={hiddenCard} faceDown />}
+          </View>
         </View>
       </View>
+      <View style={styles.middleSection}>
+        <Text style={styles.tableText}>
+          BLACKJACK PAYS 3 TO 2{'\n'}
+          Dealer must stand on soft 17
+        </Text>
+        <ActionButton label="Deal" onPress={deal} disabled={isDealing} style={styles.dealButton} />
 
-      <Button title="Deal" onPress={deal} />
-      <Button title="Stand" onPress={reveal} disabled={!hiddenCard} />
-
-      {playerHand.length === 2 && dealerHand.length === 2 ? <Winner /> : null}
-
-      <View style={styles.player}>
-        <Text>Player: ({getHandValue(playerHand)})</Text>
-        <View style={{ flexDirection: 'row' }}>
-          {playerHand.map((c, i) => (
-            <PlayingCard key={i} card={c} />
-          ))}
+        {message ? <Text>{message}</Text> : null}
+      </View>
+      <View style={styles.bottomSection}>
+        <View>
+          <Text>Player: ({getHandValue(playerHand)})</Text>
+          <View style={{ flexDirection: 'row' }}>
+            {playerHand.map((c, i) => (
+              <PlayingCard key={i} card={c} />
+            ))}
+          </View>
         </View>
       </View>
       <Pressable
@@ -88,8 +61,20 @@ export default function Game() {
           router.push('/');
         }}
       >
-        <Text style={styles.buttonText}>Home</Text>
+        <MaterialCommunityIcons name="home" size={28} color="black" />
       </Pressable>
+      <View style={styles.bottomButtons}>
+        <ActionButton
+          label="Stand"
+          onPress={() => onStand(playerHand, dealerHand)}
+          disabled={isDealing || !hiddenCard || roundOver}
+        />
+        <ActionButton
+          label="Hit"
+          onPress={() => onHit(playerHand, dealerHand)}
+          disabled={isDealing || playerHand.length === 0 || roundOver}
+        />
+      </View>
     </LinearGradient>
   );
 }
@@ -107,25 +92,60 @@ const styles = StyleSheet.create({
   },
   homeButton: {
     position: 'absolute',
-    backgroundColor: 'gray',
-    padding: 10,
-    width: 200,
+    top: 70,
+    left: 20,
+    width: 50,
     height: 50,
-    borderRadius: 10,
+    borderRadius: 8,
+    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    bottom: 30,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3,
   },
   buttonText: {
     color: 'black',
     fontSize: 24,
     fontWeight: 'bold',
   },
-  dealer: {
-    //Todo
-    top: -50,
+  bottomButtons: {
+    position: 'absolute',
+    left: 100,
+    right: 100,
+    bottom: 100,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  player: {
-    bottom: -50,
+  dealButton: {
+    width: 120,
+    height: 50,
+    borderRadius: 8,
+    backgroundColor: 'white',
+    borderColor: 'black',
+  },
+  topSection: {
+    flex: 0.7,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingTop: 16,
+  },
+  middleSection: {
+    flex: 0.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bottomSection: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingBottom: 10,
+  },
+  tableText: {
+    color: 'white',
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 12,
   },
 });
