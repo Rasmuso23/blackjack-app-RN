@@ -1,63 +1,84 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { Link, useRouter } from 'expo-router';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function Home() {
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>♠️Blackjack♠️</Text>
+    <LinearGradient
+      colors={['#0b5d1e', '#0f7a2a', '#0b5d1e']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.gradient}
+    >
+      <View style={styles.container}>
+        <View style={styles.titleContainer}>
+          <MaterialCommunityIcons name="cards-playing-outline" size={80} color="black" />
+          <Text style={styles.title}>♠️Blackjack♠️</Text>
+        </View>
+        <View style={styles.buttonsContainer}>
+          <LinearGradient
+            colors={['#FFD700', '#FFA500', '#FFD700']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.navButton}
+          >
+            <Pressable onPress={() => router.push('/game')}>
+              <Text style={styles.buttonText}>Start</Text>
+            </Pressable>
+          </LinearGradient>
+        </View>
       </View>
-      <View style={styles.buttonsContainer}>
-        <Pressable style={styles.navButton} onPress={() => router.push('/game')}>
-          <Text style={styles.buttonText}>Start</Text>
-        </Pressable>
-      </View>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
+  gradient: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    backgroundColor: 'white',
+
     justifyContent: 'center',
     alignItems: 'center',
   },
   titleContainer: {
-    position: 'absolute',
-    top: '40%',
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 80,
     marginBottom: 20,
   },
   title: {
     fontSize: 48,
-    fontWeight: 'bold',
+    fontWeight: 900,
+    letterSpacing: 3,
+    color: '#FFD700',
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
   },
   buttonsContainer: {
     alignItems: 'center',
-    position: 'absolute',
-    top: '55%',
-    left: 0,
-    right: 0,
+    marginTop: 24,
   },
   navButton: {
-    backgroundColor: 'green',
     padding: 10,
     width: 200,
-    height: 50,
+    height: 60,
     borderRadius: 10,
+    borderWidth: 2,
+    shadowColor: 'black',
+    borderColor: 'black',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
   },
   buttonText: {
     color: 'black',
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '800',
+    letterSpacing: 1,
   },
 });
