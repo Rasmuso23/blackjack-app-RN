@@ -12,8 +12,17 @@ export default function Game() {
   const router = useRouter();
 
   const { playerHand, dealerHand, setPlayerHand, setDealerHand } = useGame();
-  const { hiddenCard, message, roundOver, isDealing, deal, onHit, onStand, setHiddenCard } =
-    useBlackjack(setPlayerHand, setDealerHand);
+  const {
+    hiddenCard,
+    message,
+    showMessage,
+    roundOver,
+    isDealing,
+    deal,
+    onHit,
+    onStand,
+    setHiddenCard,
+  } = useBlackjack(setPlayerHand, setDealerHand);
 
   return (
     <LinearGradient
@@ -39,8 +48,6 @@ export default function Game() {
           Dealer must stand on soft 17
         </Text>
         <ActionButton label="Deal" onPress={deal} disabled={isDealing} style={styles.dealButton} />
-
-        {message ? <Text>{message}</Text> : null}
       </View>
       <View style={styles.bottomSection}>
         <View>
@@ -75,6 +82,12 @@ export default function Game() {
           disabled={isDealing || playerHand.length === 0 || roundOver}
         />
       </View>
+
+      {message && showMessage && (
+        <View style={styles.messageOverlay}>
+          <Text style={styles.messageText}>{message}</Text>
+        </View>
+      )}
     </LinearGradient>
   );
 }
@@ -147,5 +160,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginBottom: 12,
+  },
+  messageOverlay: {
+    position: 'absolute',
+    top: '40%',
+    left: 20,
+    right: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 999, //ovanpå korten
+    backgroundColor: 'black',
+    padding: 16,
+    borderRadius: 12,
+  },
+  messageText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: 'white',
+    textShadowColor: 'black',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+    textAlign: 'center',
   },
 });

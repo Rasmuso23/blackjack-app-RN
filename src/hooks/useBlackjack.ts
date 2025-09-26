@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, createDeck, dealerPick, drawCard, getHandValue, hit } from '../components/Deck';
 import { getWinMessage } from '../rules';
 
@@ -11,6 +11,7 @@ export function useBlackjack(
   const [message, setMessage] = useState<string | null>(null);
   const [roundOver, setRoundOver] = useState(false);
   const [isDealing, setIsDealing] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
 
   const deal = () => {
     if (isDealing) return;
@@ -95,6 +96,16 @@ export function useBlackjack(
     setIsDealing(false);
   };
 
+  useEffect(() => {
+    if (message) {
+      setShowMessage(true);
+      const timer = setTimeout(() => {
+        setShowMessage(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
   return {
     deck,
     hiddenCard,
@@ -106,5 +117,6 @@ export function useBlackjack(
     onStand,
     setHiddenCard,
     setMessage,
+    showMessage,
   };
 }
