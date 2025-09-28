@@ -53,7 +53,9 @@ export function useBlackjack(
     setDeck(result.deck);
 
     if (result.bust) {
-      setMessage('Bust! Dealer wins!');
+      const revealedDealer = hiddenCard ? [dealerHand[0], hiddenCard] : dealerHand;
+      const outcome = getWinMessage(result.hand, revealedDealer);
+      setMessage(outcome);
       setIsDealing(true);
 
       setTimeout(() => {

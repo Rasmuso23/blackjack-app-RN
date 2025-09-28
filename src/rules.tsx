@@ -1,6 +1,7 @@
 import { Card, getHandValue } from './components/Deck';
 import { useGame } from './context/GameContext';
 import { Text } from 'react-native';
+import * as Haptics from 'expo-haptics';
 
 export function getWinMessage(playerHand: Card[], dealerHand: Card[]) {
   const p = getHandValue(playerHand);
@@ -9,34 +10,57 @@ export function getWinMessage(playerHand: Card[], dealerHand: Card[]) {
   const pBJ = isBlackJack(playerHand);
   const dBJ = isBlackJack(dealerHand);
 
+  let message = '';
+
   if (pBJ && dBJ) {
-    return 'Tie!';
+    message = 'Tie!';
   }
   if (pBJ) {
-    return 'Blackjack! You win!';
+    message = 'Blackjack! You win!';
   }
   if (dBJ) {
-    ('Dealer Blackjack! Dealer wins!');
+    message = 'Dealer Blackjack! Dealer wins!';
   }
 
   if (p > 21) {
-    return 'Bust! Dealer wins!';
+    message = 'Bust! Dealer wins!';
   }
   if (d > 21) {
-    return 'Dealer bust! You win!';
+    message = 'Dealer bust! You win!';
   }
 
   if (p > d && p !== 21) {
-    return 'You win!';
+    message = 'You win!';
   }
   if (p === d) {
-    return 'Tie!';
+    message = 'Tie!';
   }
   if (d > p) {
-    return 'Dealer wins!';
+    message = 'Dealer wins!';
   }
 
-  return '';
+  playHaptics(message);
+
+  return message;
+}
+
+const hapticMap: Record<string, Haptics.NotificationFeedbackType> = {
+  'Tie!': Haptics.NotificationFeedbackType.Warning,
+  'Blackjack! You win!': Haptics.NotificationFeedbackType.Success,
+  'Dealer Blackjack! Dealer wins!': Haptics.NotificationFeedbackType.Error,
+  'Bust! Dealer wins!': Haptics.NotificationFeedbackType.Error,
+  'Dealer bust! You win!': Haptics.NotificationFeedbackType.Success,
+  'You win!': Haptics.NotificationFeedbackType.Success,
+  'Dealer wins!': Haptics.NotificationFeedbackType.Error,
+};
+
+export function playHaptics(message: string) {
+  const feedback = hapticMap[message];
+  if (feedback) {
+    Haptics.notificationAsync(feedback);
+  } else {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+  }
 }
 
 function isBlackJack(hand: Card[]) {
