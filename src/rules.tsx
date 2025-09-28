@@ -14,33 +14,23 @@ export function getWinMessage(playerHand: Card[], dealerHand: Card[]) {
 
   if (pBJ && dBJ) {
     message = 'Tie!';
-  }
-  if (pBJ) {
+  } else if (pBJ) {
     message = 'Blackjack! You win!';
-  }
-  if (dBJ) {
+  } else if (dBJ) {
     message = 'Dealer Blackjack! Dealer wins!';
-  }
-
-  if (p > 21) {
+  } else if (p > 21) {
     message = 'Bust! Dealer wins!';
-  }
-  if (d > 21) {
+  } else if (d > 21) {
     message = 'Dealer bust! You win!';
-  }
-
-  if (p > d && p !== 21) {
-    message = 'You win!';
-  }
-  if (p === d) {
+  } else if (p === d) {
     message = 'Tie!';
-  }
-  if (d > p) {
+  } else if (p > d) {
+    message = 'You win!';
+  } else {
     message = 'Dealer wins!';
   }
 
   playHaptics(message);
-
   return message;
 }
 
