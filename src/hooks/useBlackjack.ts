@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, createDeck, dealerPick, drawCard, getHandValue, hit } from '../components/Deck';
+import { Card, createDeck, drawCard, getHandValue, hit } from '../components/Deck';
 import { getWinMessage } from '../rules';
 
 export function useBlackjack(
@@ -79,21 +79,33 @@ export function useBlackjack(
   };
 
   const onStand = (playerHand: Card[], dealerHand: Card[]) => {
-    if (isDealing) return;
+    if (isDealing || roundOver) return;
     setIsDealing(true);
 
     const revealDealer = hiddenCard ? [dealerHand[0], hiddenCard] : dealerHand;
     setDealerHand(revealDealer);
     setHiddenCard(null);
 
-    const r = dealerPick(revealDealer, deck);
-    setDealerHand(r.hand);
-    setDeck(r.deck);
+    let deckNow = [...deck];
 
-    const outcome = getWinMessage(playerHand, r.hand);
-    setMessage(outcome);
-    setRoundOver(true);
-    setIsDealing(false);
+    const step = (hand: Card[]) => {
+      if (getHandValue(hand) < 17) {
+        const [card, rest] = drawCard(deckNow);
+        deckNow = rest;
+
+        const next = [...hand, card];
+        setDealerHand(next);
+
+        setTimeout(() => step(next), 1000);
+      } else {
+        setDeck(deckNow);
+        const outcome = getWinMessage(playerHand, hand);
+        setMessage(outcome);
+        setRoundOver(true);
+        setIsDealing(false);
+      }
+    };
+    setTimeout(() => step(revealDealer), 1000);
   };
 
   useEffect(() => {
