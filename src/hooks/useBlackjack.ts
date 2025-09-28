@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, createDeck, drawCard, getHandValue, hit } from '../components/Deck';
 import { getWinMessage } from '../rules';
+import { addStat } from '../stats';
 
 export function useBlackjack(
   setPlayerHand: (cards: Card[]) => void,
@@ -56,6 +57,7 @@ export function useBlackjack(
       const revealedDealer = hiddenCard ? [dealerHand[0], hiddenCard] : dealerHand;
       const outcome = getWinMessage(result.hand, revealedDealer);
       setMessage(outcome);
+      addStat(outcome);
       setIsDealing(true);
 
       setTimeout(() => {
@@ -103,6 +105,7 @@ export function useBlackjack(
         setDeck(deckNow);
         const outcome = getWinMessage(playerHand, hand);
         setMessage(outcome);
+        addStat(outcome);
         setRoundOver(true);
         setIsDealing(false);
       }
