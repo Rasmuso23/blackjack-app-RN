@@ -1,9 +1,35 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, Pressable } from 'react-native';
+import { useWallet } from '../../src/hooks/useWallet';
 
 export default function Wallet() {
+  const { balance, deposit, withdraw } = useWallet();
+  const sum = 100;
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Wallet</Text>
+    <View
+      style={{
+        flex: 1,
+        gap: 16,
+        padding: 20,
+        justifyContent: 'center',
+        backgroundColor: '#0a0a0a',
+      }}
+    >
+      <Text style={{ fontSize: 28, textAlign: 'center', color: 'gold' }}>Wallet: ${balance}</Text>
+
+      <Pressable
+        onPress={() => deposit(sum)}
+        style={{ backgroundColor: '#15803d', padding: 10, borderRadius: 12 }}
+      >
+        <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>+ {sum}</Text>
+      </Pressable>
+
+      <Pressable
+        onPress={() => withdraw(sum)}
+        style={{ backgroundColor: '#b91c1c', padding: 10, borderRadius: 12 }}
+      >
+        <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>- {sum}</Text>
+      </Pressable>
     </View>
   );
 }
