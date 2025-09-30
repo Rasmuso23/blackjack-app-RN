@@ -53,22 +53,6 @@ export function getHandValue(hand: Card[]): number {
   return total;
 }
 
-//Pick new cards until 21 or bust
-
-export function dealerPick(dealer: Card[], deck: Card[]) {
-  let d = [...dealer];
-  let next = [...deck];
-
-  while (getHandValue(d) < 17) {
-    const [card, rest] = drawCard(next);
-    d = [...d, card];
-    next = rest;
-  }
-  const total = getHandValue(d);
-
-  return { hand: d, deck: next, total, bust: total > 21 } as const;
-}
-
 export function drawCard(deck: Card[]): [Card, Card[]] {
   const next = [...deck];
   const card = next.pop()!;
