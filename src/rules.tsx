@@ -2,6 +2,9 @@ import { Card, getHandValue } from './components/Deck';
 import { useGame } from './context/GameContext';
 import { Text } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import { Audio } from 'expo-av';
+import winSound from '../assets/sounds/win.mp3';
+import loseSound from '../assets/sounds/lose.mp3';
 
 export function getWinMessage(playerHand: Card[], dealerHand: Card[]) {
   const p = getHandValue(playerHand);
@@ -16,18 +19,24 @@ export function getWinMessage(playerHand: Card[], dealerHand: Card[]) {
     message = 'Tie!';
   } else if (pBJ) {
     message = 'Blackjack! You win!';
+    playSound('win');
   } else if (dBJ) {
     message = 'Dealer Blackjack! Dealer wins!';
+    playSound('lose');
   } else if (p > 21) {
     message = 'Bust! Dealer wins!';
+    playSound('lose');
   } else if (d > 21) {
     message = 'Dealer bust! You win!';
+    playSound('win');
   } else if (p === d) {
     message = 'Tie!';
   } else if (p > d) {
     message = 'You win!';
+    playSound('win');
   } else {
     message = 'Dealer wins!';
+    playSound('lose');
   }
 
   playHaptics(message);
@@ -51,6 +60,12 @@ export function playHaptics(message: string) {
   } else {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   }
+}
+
+export async function playSound(type: 'win' | 'lose') {
+  const file = type === 'win' ? winSound : loseSound;
+  const { sound } = await Audio.Sound.createAsync(file);
+  await sound.playAsync();
 }
 
 export function isBlackJack(hand: Card[]) {
