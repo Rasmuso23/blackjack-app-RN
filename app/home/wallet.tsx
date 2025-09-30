@@ -15,7 +15,9 @@ export default function Wallet() {
         backgroundColor: '#0a0a0a',
       }}
     >
-      <Text style={{ fontSize: 28, textAlign: 'center', color: 'gold' }}>Wallet: ${balance}</Text>
+      <Text style={{ fontSize: 28, textAlign: 'center', color: 'white' }}>
+        Current balance: {balance}
+      </Text>
 
       <Pressable
         onPress={() => deposit(sum)}
