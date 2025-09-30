@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Card, createDeck, drawCard, getHandValue, hit } from '../components/Deck';
-import { getWinMessage } from '../rules';
+import { getWinMessage, isBlackJack } from '../rules';
 import { addStat } from '../stats';
+import { useWallet } from './useWallet';
 
 export function useBlackjack(
   setPlayerHand: (cards: Card[]) => void,
   setDealerHand: (cards: Card[]) => void,
+  wallet: {
+    deposit: (amount: number) => Promise<void>;
+    withdraw: (amount: number) => Promise<void>;
+    bet: number;
+  },
 ) {
   const [deck, setDeck] = useState<Card[]>([]);
   const [hiddenCard, setHiddenCard] = useState<Card | null>(null);
@@ -13,6 +19,8 @@ export function useBlackjack(
   const [roundOver, setRoundOver] = useState(false);
   const [isDealing, setIsDealing] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
+  const { deposit, withdraw, bet } = wallet;
+  //const bet = 100;
 
   const deal = () => {
     if (isDealing) return;
@@ -58,6 +66,12 @@ export function useBlackjack(
       const outcome = getWinMessage(result.hand, revealedDealer);
       setMessage(outcome);
       addStat(outcome);
+
+      if (outcome.includes('You win')) {
+        deposit(bet);
+      } else if (outcome.includes('Dealer wins')) {
+        withdraw(bet);
+      }
       setIsDealing(true);
 
       setTimeout(() => {
@@ -106,6 +120,18 @@ export function useBlackjack(
         const outcome = getWinMessage(playerHand, hand);
         setMessage(outcome);
         addStat(outcome);
+
+        const playerBJ = isBlackJack(playerHand);
+        const dealerBJ = isBlackJack(hand);
+
+        if (playerBJ && !dealerBJ) {
+          //betalar 3:2
+          deposit(Math.round(bet * 1.5));
+        } else if (outcome.includes('You win')) {
+          deposit(bet);
+        } else if (outcome.includes('Dealer wins')) {
+          withdraw(bet);
+        }
         setRoundOver(true);
         setIsDealing(false);
       }

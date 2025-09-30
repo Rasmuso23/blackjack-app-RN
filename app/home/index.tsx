@@ -18,18 +18,15 @@ export default function Home() {
           <MaterialCommunityIcons name="cards-playing-outline" size={80} color="black" />
           <Text style={styles.title}>♠️Blackjack♠️</Text>
         </View>
-        <View style={styles.buttonsContainer}>
+        <Pressable onPress={() => router.push('/game')} style={styles.navButton}>
           <LinearGradient
             colors={['#FFD700', '#FFA500', '#FFD700']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={styles.navButton}
-          >
-            <Pressable onPress={() => router.push('/game')}>
-              <Text style={styles.buttonText}>Start</Text>
-            </Pressable>
-          </LinearGradient>
-        </View>
+            style={[StyleSheet.absoluteFill, { borderRadius: 10 }]}
+          />
+          <Text style={styles.buttonText}>Start</Text>
+        </Pressable>
       </View>
     </LinearGradient>
   );
@@ -64,7 +61,6 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   navButton: {
-    padding: 10,
     width: 200,
     height: 60,
     borderRadius: 10,

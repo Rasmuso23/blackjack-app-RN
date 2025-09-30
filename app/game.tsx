@@ -6,12 +6,16 @@ import { useGame } from '../src/context/GameContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import PlayingCard from '../src/components/Card';
 import ActionButton from '../src/components/ActionButton';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useWallet } from '../src/hooks/useWallet';
 
 export default function Game() {
   const router = useRouter();
 
+  const bet = 100;
+
   const { playerHand, dealerHand, setPlayerHand, setDealerHand } = useGame();
+  const { balance, deposit, withdraw } = useWallet();
   const {
     hiddenCard,
     message,
@@ -22,7 +26,7 @@ export default function Game() {
     onHit,
     onStand,
     setHiddenCard,
-  } = useBlackjack(setPlayerHand, setDealerHand);
+  } = useBlackjack(setPlayerHand, setDealerHand, { deposit, withdraw, bet });
 
   return (
     <LinearGradient
@@ -45,7 +49,7 @@ export default function Game() {
       <View style={styles.middleSection}>
         <Text style={styles.tableText}>
           BLACKJACK PAYS 3 TO 2{'\n'}
-          Dealer must stand on soft 17
+          Dealer must stand on 17
         </Text>
         <ActionButton label="Deal" onPress={deal} disabled={isDealing} style={styles.dealButton} />
       </View>
@@ -69,6 +73,10 @@ export default function Game() {
         }}
       >
         <MaterialCommunityIcons name="home" size={28} color="black" />
+      </Pressable>
+      <Pressable style={styles.walletButton} onPress={() => router.push('/home/wallet')}>
+        <Ionicons name="wallet-sharp" size={28} color="black" />
+        <Text style={styles.walletText}>{balance}</Text>
       </Pressable>
       <View style={styles.bottomButtons}>
         <ActionButton
@@ -117,6 +125,32 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 3,
+    borderWidth: 2,
+    borderColor: 'black',
+  },
+  walletButton: {
+    position: 'absolute',
+    top: 70,
+    right: 20,
+    width: 80,
+    height: 60,
+    borderRadius: 8,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3,
+    borderWidth: 2,
+    borderColor: 'black',
+  },
+  walletText: {
+    marginTop: 4,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'black',
   },
   buttonText: {
     color: 'black',

@@ -53,7 +53,7 @@ export function playHaptics(message: string) {
   }
 }
 
-function isBlackJack(hand: Card[]) {
+export function isBlackJack(hand: Card[]) {
   return hand.length === 2 && getHandValue(hand) === 21;
 }
 
