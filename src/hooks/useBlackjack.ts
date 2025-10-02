@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, createDeck, drawCard, getHandValue, hit } from '../components/Deck';
-import { getWinMessage, isBlackJack } from '../rules';
+import { getWinMessage, isBlackJack } from '../outcome';
 import { addStat } from '../stats';
 
 export function useBlackjack(
