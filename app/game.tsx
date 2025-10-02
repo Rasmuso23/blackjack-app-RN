@@ -30,7 +30,7 @@ export default function Game() {
 
   return (
     <LinearGradient
-      colors={['#0b5d1e', '#0f7a2a', '#0b5d1e']}
+      colors={['#0b5d1e', '#818682ff', '#0b5d1e']}
       start={{ x: 0.2, y: 0 }}
       end={{ x: 0.8, y: 1 }}
       style={styles.container}

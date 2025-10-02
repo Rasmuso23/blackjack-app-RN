@@ -20,10 +20,9 @@ export function createDeck(): Card[] {
 function shuffle(deck: Card[]): Card[] {
   const shuffled = [...deck];
 
-  //Fisher-Yates
   for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1)); //slumpar index mellan 0 och i
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; //byter plats
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
 }
