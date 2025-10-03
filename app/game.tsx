@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { getHandValue } from '../src/components/Deck';
 import { useRouter } from 'expo-router';
 import { useBlackjack } from '../src/hooks/useBlackjack';
@@ -38,12 +38,17 @@ export default function Game() {
       <View style={styles.topSection}>
         <View>
           <Text>Dealer ({hiddenCard ? '?' : getHandValue(dealerHand)})</Text>
-          <View style={{ flexDirection: 'row' }}>
+          <ScrollView
+            horizontal
+            style={styles.handScrollContainer}
+            contentContainerStyle={styles.handScrollContent}
+            showsHorizontalScrollIndicator={false}
+          >
             {dealerHand.map((c, i) => (
               <PlayingCard key={i} card={c} />
             ))}
             {hiddenCard && <PlayingCard card={hiddenCard} faceDown />}
-          </View>
+          </ScrollView>
         </View>
       </View>
       <View style={styles.middleSection}>
@@ -56,11 +61,16 @@ export default function Game() {
       <View style={styles.bottomSection}>
         <View>
           <Text>Player: ({getHandValue(playerHand)})</Text>
-          <View style={{ flexDirection: 'row' }}>
+          <ScrollView
+            horizontal
+            style={styles.handScrollContainer}
+            contentContainerStyle={styles.handScrollContent}
+            showsHorizontalScrollIndicator={false}
+          >
             {playerHand.map((c, i) => (
               <PlayingCard key={i} card={c} />
             ))}
-          </View>
+          </ScrollView>
         </View>
       </View>
       <Pressable
@@ -152,6 +162,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
   },
+  handScrollContainer: {
+    maxWidth: '100%',
+    marginTop: 12,
+  },
+  handScrollContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   buttonText: {
     color: 'black',
     fontSize: 24,
@@ -161,7 +179,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 100,
     right: 100,
-    bottom: 100,
+    bottom: 50,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -175,8 +193,8 @@ const styles = StyleSheet.create({
   topSection: {
     flex: 0.7,
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingTop: 16,
+    justifyContent: 'center',
+    paddingTop: 120,
   },
   middleSection: {
     flex: 0.5,
@@ -186,8 +204,8 @@ const styles = StyleSheet.create({
   bottomSection: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingBottom: 10,
+    justifyContent: 'center',
+    paddingBottom: 120,
   },
   tableText: {
     color: 'white',
